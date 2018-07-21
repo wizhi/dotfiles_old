@@ -1,0 +1,289 @@
+# i3 config file (v4)
+#   https://i3wm.org/docs/userguide.html
+# 
+# Tailored for my minimalistic keyboard centric experience.
+# Tested on a Dell XPS 9560 using Arch.
+# 
+# Dependencies:
+#   - compton
+#   - feh
+#   - fish
+#   - i3status-rs
+#   - light
+#   - maim
+#   - mpc
+#   - ponymix
+#   - ttf-dejavu
+#   - ttf-fontawesome-4
+#   - ttf-liberation
+#   - tmux
+#   - xclip
+#   - xdotool
+
+set $mod Mod4
+set $config_dir ~/.config/i3
+
+###########
+# Visuals #
+###########
+
+set $config_dir_bars ~/.config/i3/bars
+set $_wallpaper ~/.fehbg
+
+font pango:DejaVu Sans Mono, LiberationMono, FontAwesome 9
+new_window normal 1 px
+floating_modifier $mod
+hide_edge_borders both
+
+# Primary
+bar {
+    output primary
+    tray_output primary
+    workspace_buttons yes
+    status_command i3status-rs $config_dir_bars/primary.toml
+    
+    colors {
+        background #222D32
+        statusline #ffffff
+        separator  #666666
+
+        focused_workspace  #449cdb #449cdb #1d1f21
+        active_workspace   #cfd8dc #222d32 #cfd8dc
+        inactive_workspace #cfd8dc #222d32 #cfd8dc
+        urgent_workspace   #2f343a #900000 #ffffff
+        binding_mode       #ff5252 #1d1f21 #ff5252
+    }
+}
+
+# Secondary
+bar {
+    output HDMI1
+    workspace_buttons yes
+    status_command i3status-rs $config_dir_bars/secondary.toml
+
+    colors {
+        background #222D32
+        statusline #ffffff
+        separator  #666666
+
+        focused_workspace  #449cdb #449cdb #1d1f21
+        active_workspace   #cfd8dc #222d32 #cfd8dc
+        inactive_workspace #cfd8dc #222d32 #cfd8dc
+        urgent_workspace   #2f343a #900000 #ffffff
+        binding_mode       #ff5252 #1d1f21 #ff5252
+    }
+}
+
+# Make things nice
+exec compton
+exec $_wallpaper
+
+######################
+# Global keybindings #
+######################
+
+bindsym $mod+Shift+q kill
+
+# Window
+bindsym $mod+h focus left
+bindsym $mod+j focus down
+bindsym $mod+k focus up
+bindsym $mod+l focus right
+bindsym $mod+Left focus left
+bindsym $mod+Down focus down
+bindsym $mod+Up focus up
+bindsym $mod+Right focus right
+
+bindsym $mod+space focus toggle_mode
+#bindsym $mod+a focus parent
+#bindsym $mod+d focus child
+
+bindsym $mod+Shift+h move left
+bindsym $mod+Shift+j move down
+bindsym $mod+Shift+k move up
+bindsym $mod+Shift+l move right
+bindsym $mod+Shift+Left move left
+bindsym $mod+Shift+Down move down
+bindsym $mod+Shift+Up move up
+bindsym $mod+Shift+Right move right
+
+# Layout
+bindsym $mod+b split h
+bindsym $mod+v split v
+bindsym $mod+f fullscreen toggle
+
+bindsym $mod+s layout stacking
+bindsym $mod+w layout tabbed
+bindsym $mod+e layout toggle split
+
+bindsym $mod+Shift+space floating toggle
+bindsym $mod+Shift+minus move scratchpad
+bindsym $mod+minus scratchpad show
+
+# Menus
+bindsym $mod+d exec --no-startup-id i3-dmenu-desktop
+bindsym $mod+Shift+d exec dmenu_run
+bindsym $mod+p exec passmenu
+bindsym $mod+m exec mpdmenu
+
+# Media keys
+#   Tailored for Dell XPS 15 9560, YMMV
+bindsym XF86AudioMute exec ponymix toggle
+bindsym XF86AudioRaiseVolume exec ponymix increase 5
+bindsym XF86AudioLowerVolume exec ponymix decrease 5
+bindcode 172 exec mpc toggle
+bindsym XF86AudioNext exec mpc next
+bindsym XF86AudioPrev exec mpc prev
+bindsym XF86MonBrightnessUp exec light -A 10
+bindsym XF86MonBrightnessDown exec light -U 10
+
+# Workspace
+#   Named workspaces are a bother, see "Workspace mode" for renaming
+bindsym $mod+1 workspace number 1
+bindsym $mod+2 workspace number 2
+bindsym $mod+3 workspace number 3
+bindsym $mod+4 workspace number 4
+bindsym $mod+5 workspace number 5
+bindsym $mod+6 workspace number 6
+bindsym $mod+7 workspace number 7
+bindsym $mod+8 workspace number 8
+bindsym $mod+9 workspace number 9
+bindsym $mod+0 workspace number 10
+
+bindsym $mod+Control+Shift+h move workspace to output left
+bindsym $mod+Control+Shift+j move workspace to output down
+bindsym $mod+Control+Shift+k move workspace to output up
+bindsym $mod+Control+Shift+l move workspace to output right
+
+# Container
+bindsym $mod+Shift+1 move container to workspace number 1
+bindsym $mod+Shift+2 move container to workspace number 2
+bindsym $mod+Shift+3 move container to workspace number 3
+bindsym $mod+Shift+4 move container to workspace number 4
+bindsym $mod+Shift+5 move container to workspace number 5
+bindsym $mod+Shift+6 move container to workspace number 6
+bindsym $mod+Shift+7 move container to workspace number 7
+bindsym $mod+Shift+8 move container to workspace number 8
+bindsym $mod+Shift+9 move container to workspace number 9
+bindsym $mod+Shift+0 move container to workspace number 10
+
+bindsym $mod+Control+h move container to output left
+bindsym $mod+Control+j move container to output down
+bindsym $mod+Control+k move container to output up
+bindsym $mod+Control+l move container to output right
+
+#########
+# Modes #
+#########
+
+# System mode
+#   For general system commands 
+set $system_mode "system: [l]ock, [r]eboot, [s]hutdown"
+set $app_locker i3lock -i ~/lockscreen -e -f && sleep 1
+
+bindsym $mod+Delete mode $system_mode
+
+mode $system_mode {
+    bindsym l exec --no-startup-id $app_locker, mode "default"
+    #bindsym s exec --no-startup-id $app_locker && systemctl suspend, mode "default"
+    #bindsym h exec --no-startup-id $app_locker && systemctl hibernate, mode "default"
+    bindsym r exec --no-startup-id systemctl reboot, mode "default"
+    bindsym s exec --no-startup-id systemctl poweroff -i, mode "default"  
+
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+}
+
+# i3 mode
+#   For interacting with i3
+set $i3_mode "i3: re[l]oad, re[s]tart, [e]xit"
+
+bindsym $mod+i mode $i3_mode
+
+mode $i3_mode {
+    bindsym l reload, mode "default"
+    bindsym s restart, mode "default"
+    bindsym e exec --no-startup-id i3-msg exit, mode "default"
+
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+}
+
+# Workspace mode
+#   For textual manipulation of workspaces
+set $workspace_mode "workspace: [g]oto, [r]ename"
+
+bindsym $mod+u mode $workspace_mode
+
+mode $workspace_mode {
+    bindsym r exec i3-input -F 'rename workspace to "%s"' -P 'New name: ', mode "default"
+    bindsym g exec i3-input -F 'workspace "%s"' -P 'Name: ', mode "default"
+
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+}
+
+# Resize mode
+#   For resizing windows
+set $resize_mode "resize"
+set $resize_increment 10 px or 10 ppt
+
+bindsym $mod+r mode $resize_mode
+
+mode $resize_mode {
+    bindsym h resize shrink width $resize_increment
+    bindsym j resize grow height $resize_increment
+    bindsym k resize shrink height $resize_increment
+    bindsym l resize grow width $resize_increment
+    bindsym Left resize shrink width $resize_increment
+    bindsym Down resize grow height $resize_increment
+    bindsym Up resize shrink height $resize_increment
+    bindsym Right resize grow width $resize_increment
+    
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+}
+
+# Display mode
+#   Very simplistic display switching
+set $display_mode "[s]ingle, [d]uplicate, [e]xtend"
+set $display_hdmi1_mode xrandr | grep HDMI1 -a1 | tail -n 1 | awk '/[0-9]+x[0-9]+/{ print $1 }'
+
+bindsym $mod+o mode $display_mode
+
+mode $display_mode {
+    bindsym s exec xrandr --output HDMI1 --off, exec sleep 1 && $_wallpaper, mode "default"
+    bindsym d exec xrandr --output HDMI1 --mode `$display_hdmi1_mode` --same-as eDP1, exec sleep 1 && $_wallpaper, mode "default"
+    bindsym e exec xrandr --output HDMI1 --mode `$display_hdmi1_mode` --right-of eDP1, exec sleep 1 && $_wallpaper, mode "default"
+
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+}
+
+# Screenshot mode
+#   Because my environment is too nice not to be shared
+set $screenshot_mode "screenshot: [e]verything, [w]indow, [s]election"
+
+bindsym Print mode $screenshot_mode
+
+mode $screenshot_mode {
+    bindsym e exec maim | xclip -selection clipboard -t image/png, mode "default"
+    bindsym w exec maim -i `xdotool getactivewindow` | xclip -selection clipboard -t image/png, mode "default"
+    bindsym s exec maim -s | xclip -selection clipboard -t image/png, mode "default"
+
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+}
+
+# Terminal mode
+#   Hook into or create new tmux sessions
+set $terminal_mode "terminal: [a]ttach, [n]ew"
+bindsym $mod+Return mode $terminal_mode
+
+mode $terminal_mode {
+    bindsym a exec ~/scripts/tmuxmenu.fish, mode "default"
+    bindsym n exec i3-sensible-terminal -e tmux new, mode "default"
+
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+}
