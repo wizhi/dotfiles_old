@@ -17,6 +17,7 @@
 #set fish_pager_color_progress # the color of the progress bar at the bottom left corner
 #set fish_pager_color_secondary # the background color of the every second completionalias sudo='sudo '
 
+set -g -x PATH $PATH /home/wizhi/bin/
 set -g -x TERMINAL (which st) # Used by i3-sensible-terminal
 set -g -x EDITOR (which nvim)  
 
